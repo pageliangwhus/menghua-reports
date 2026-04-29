@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内部方案评审报告 · 梦华小院项目评估</title>
+<style>
+  :root {
+    --primary: #8B0000;
+    --primary-light: #C62828;
+    --accent: #EF5350;
+    --bg: #FFF8F6;
+    --card-bg: #FFFFFF;
+    --text: #2D1A1A;
+    --text-light: #7A5555;
+    --border: #E8C8C8;
+    --pass: #2E7D32;
+    --warn: #E65100;
+    --fail: #C62828;
+    --tag-pass: #E8F5E9;
+    --tag-warn: #FFF3E0;
+    --tag-fail: #FFEBEE;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .page-header {
+    background: linear-gradient(135deg, #4A0000 0%, #8B0000 50%, #C62828 100%);
+    color: #FFF;
+    padding: 48px 0 36px;
+    text-align: center;
+  }
+  .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; }
+  .page-header .subtitle { font-size: 15px; opacity: 0.85; }
+  .page-header .meta { font-size: 12px; opacity: 0.6; margin-top: 12px; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  .exec-summary {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(139,0,0,0.06);
+  }
+  .exec-summary h2 { font-size: 20px; color: var(--primary); margin-bottom: 16px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+  .exec-summary .verdict {
+    font-size: 22px; font-weight: 700; text-align: center;
+    padding: 16px; border-radius: 8px; margin: 16px 0;
+    color: var(--primary);
+  }
+  .verdict-conditional { background: linear-gradient(135deg, #FFF3E0, #FFEBEE); }
+  .exec-summary ul { padding-left: 20px; }
+  .exec-summary li { margin-bottom: 6px; }
+
+  .section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(139,0,0,0.06);
+  }
+  .section h2 {
+    font-size: 19px; color: var(--primary);
+    border-left: 4px solid var(--accent); padding-left: 12px;
+    margin-bottom: 16px;
+  }
+  .section h3 { font-size: 16px; color: var(--primary-light); margin: 18px 0 10px; }
+  .section h4 { font-size: 14px; color: var(--text-light); margin: 14px 0 8px; }
+  .section p { margin-bottom: 10px; }
+  .section ul, .section ol { padding-left: 20px; margin-bottom: 12px; }
+  .section li { margin-bottom: 4px; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0 16px;
+    font-size: 14px;
+  }
+  th {
+    background: var(--primary); color: #FFF;
+    padding: 10px 12px; text-align: left; font-weight: 600;
+  }
+  td {
+    padding: 9px 12px; border-bottom: 1px solid var(--border);
+  }
+  tr:nth-child(even) td { background: #FFF5F5; }
+  tr:hover td { background: #FFE8E8; }
+
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+  }
+  .tag-pass { background: var(--tag-pass); color: var(--pass); }
+  .tag-warn { background: var(--tag-warn); color: var(--warn); }
+  .tag-fail { background: var(--tag-fail); color: var(--fail); }
+
+  .risk-high { color: var(--fail); font-weight: 700; }
+  .risk-mid { color: var(--warn); font-weight: 700; }
+  .risk-low { color: var(--pass); font-weight: 700; }
+
+  .note-box {
+    font-size: 13px; color: #5D4037; background: #FFF8E1;
+    padding: 10px 14px; border-radius: 6px; margin: 12px 0;
+    border-left: 3px solid #FFB300;
+  }
+
+  .conclusion-box {
+    background: linear-gradient(135deg, #4A0000 0%, #8B0000 100%);
+    color: #FFF; border-radius: 10px; padding: 24px 28px; margin-top: 16px;
+  }
+  .conclusion-box h3 { color: #FFCDD2; margin-bottom: 10px; font-size: 17px; }
+  .conclusion-box p { opacity: 0.92; margin-bottom: 8px; }
+
+  .score-bar {
+    display: flex; align-items: center; gap: 8px; margin: 4px 0;
+  }
+  .score-bar .bar {
+    height: 16px; border-radius: 8px; min-width: 20px;
+  }
+  .score-bar .label { font-size: 13px; min-width: 60px; }
+  .score-bar .value { font-size: 13px; font-weight: 600; }
+
+  @media print {
+    .page-header { padding: 24px 0 18px; }
+    .container { padding: 16px; }
+    .section { break-inside: avoid; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>内部方案评审报告</h1>
+  <div class="subtitle">梦华小院 · 项目评估 Step 3</div>
+  <div class="meta">评审时间：2026年4月29日 ｜ 策划文档自评95分 ｜ 复检54分</div>
+</div>
+
+<div class="container">
+
+<!-- 执行摘要 -->
+<div class="exec-summary">
+  <h2>评审结论</h2>
+  <div class="verdict verdict-conditional">条件性Go —— 三个P0前置条件必须解决</div>
+
+  <h3>整体评定</h3>
+  <p>6个模块评审中，<strong>3个不通过、3个有条件通过</strong>。策划文档在概念层面逻辑自洽，但进入执行层面后暴露出严重的方案缺失。可行性复核自评95分经复检降至54分，核心原因是<strong>停留在"逻辑通"而非"做得出来"</strong>。</p>
+
+  <h3>12项评审结果速览</h3>
+  <table>
+    <tr><th>模块</th><th>评审项</th><th>判定</th><th>核心问题</th></tr>
+    <tr><td rowspan="4">一、产品定位</td>
+      <td>1.1 种植向定位</td><td><span class="tag tag-warn">有条件通过</span></td><td>品类结构性滑落未验证</td></tr>
+    <tr><td>1.2 下沉市场定位</td><td><span class="tag tag-pass">通过</span></td><td>用户重叠度高，消费习惯适配性待验证</td></tr>
+    <tr><td>1.3 李子柒式体验</td><td><span class="tag tag-fail">不通过</span></td><td>P0需求无生产方案</td></tr>
+    <tr><td>1.4 Slogan可落地</td><td><span class="tag tag-fail">不通过</span></td><td>无可执行方案，有花园世界失败先例</td></tr>
+    <tr><td rowspan="4">二、核心机制</td>
+      <td>2.1 双轨制节奏差</td><td><span class="tag tag-warn">有条件通过</span></td><td>快轨正反馈不足</td></tr>
+    <tr><td>2.2 熟水一键交付</td><td><span class="tag tag-warn">有条件通过</span></td><td>日常循环缺乏情感反馈</td></tr>
+    <tr><td>2.3 底卡槽位复杂度</td><td><span class="tag tag-warn">有条件通过</span></td><td>8种变体理解门槛可能劝退下沉用户</td></tr>
+    <tr><td>2.4 514种食材内容量</td><td><span class="tag tag-fail">不通过</span></td><td>无美术排期、无分批方案</td></tr>
+    <tr><td rowspan="4">三、商业化</td>
+      <td>3.1 灵韵降价影响</td><td><span class="tag tag-fail">不通过</span></td><td>收入替代方案完全缺失</td></tr>
+    <tr><td>3.2 ¥6-30定价</td><td><span class="tag tag-warn">有条件通过</span></td><td>缺竞品付费数据</td></tr>
+    <tr><td>3.3 掌柜令牌</td><td><span class="tag tag-warn">有条件通过</span></td><td>权益对照不完整</td></tr>
+    <tr><td>3.4 广告变现模型</td><td><span class="tag tag-fail">不通过</span></td><td>完全缺失</td></tr>
+  </table>
+</div>
+
+<!-- 三个致命风险 -->
+<div class="section">
+  <h2>三个致命风险</h2>
+
+  <div class="note-box">
+    以下三个风险任一未解决，项目可能失败。必须在立项前2-3周内给出可行答案。
+  </div>
+
+  <h3>风险一：精轨动画——双轨制的命脉</h3>
+  <p>双轨制的核心价值在节奏差：快轨快、精轨慢。如果精轨没有15-25秒高品质动画，双轨制就变成"一键完成"和"填完格子直接出结果"，核心设计崩塌。</p>
+  <table>
+    <tr><th>维度</th><th>现状</th><th>问题</th></tr>
+    <tr><td>策划定位</td><td>P0需求，"没有它就和填槽位→秒出结果没区别"</td><td>定位正确</td></tr>
+    <tr><td>生产方案</td><td>"最少2套通用模板"一句话</td><td class="risk-high">无技术方案、无工时估算、无团队产能测算</td></tr>
+    <tr><td>成本估算</td><td>未评估</td><td class="risk-high">2-3套高品质模板可能30-50万元，休闲游戏能否承受？</td></tr>
+    <tr><td>重复体验</td><td>未考虑</td><td class="risk-mid">2套模板复用所有植物，第3次重复时仪式感消失</td></tr>
+  </table>
+
+  <h3>风险二：美术工作量——514+69的黑洞</h3>
+  <table>
+    <tr><th>资源类型</th><th>数量</th><th>预估人天</th></tr>
+    <tr><td>食材图标</td><td>514个</td><td>257-514</td></tr>
+    <tr><td>底卡图</td><td>69张</td><td>138-207</td></tr>
+    <tr><td>植株形态</td><td>514种</td><td>~257</td></tr>
+    <tr><td>成品拼装组件</td><td>40-50个</td><td>40-50</td></tr>
+    <tr><td>精轨动画</td><td>2套+</td><td>40-60</td></tr>
+    <tr><td>UI界面</td><td>15-20页</td><td>45-100</td></tr>
+    <tr><td><strong>合计</strong></td><td></td><td><strong>777-1188人天</strong></td></tr>
+  </table>
+  <p>1人美术需35-54个月，3人团队需12-18个月。无分批上线方案，无美术排期。</p>
+
+  <h3>风险三：灵韵付费——商业化闭环缺失</h3>
+  <p>花灵贡献花园世界<strong>40-60%收入</strong>（月均2-3亿），灵韵从~¥1000降至¥6且纯收集无数值。收入替代方案<strong>完全缺失</strong>，广告变现模型<strong>完全缺失</strong>。</p>
+  <p>按¥6 ARPU计算，需53-80万月付费用户才能补回花灵收入缺口，策划文档未提供用户规模与转化率预测。</p>
+</div>
+
+<!-- 模块一详情 -->
+<div class="section">
+  <h2>模块一：产品定位评审</h2>
+
+  <h3>1.1 种植向定位 — 有条件通过</h3>
+  <p><strong>依据</strong>：Step 1确认"种植在花园世界中退化为纯材料来源"是品类结构性问题。策划文档P5原则和7项增强设计方向正确，但均为设计意图，未经原型验证。</p>
+  <p><strong>风险</strong>：种植随机变异的概率平衡、植株展示期的时长、种苗交易的经济坍缩，三项均未验证。</p>
+  <p><strong>升级条件</strong>：对核心增强项完成最小可玩原型，建立种植乐趣度量化监控指标。</p>
+
+  <h3>1.2 下沉市场定位 — 通过</h3>
+  <p><strong>依据</strong>：花园世界非TapTap用户（下沉市场）占比60-70%，远超30%及格线。月流水近5亿证明下沉用户付费能力真实。</p>
+  <p><strong>隐性风险</strong>：用户池重叠≠体验偏好重叠。下沉用户可能习惯"氪了就出结果"的快反馈，而非"种了等15秒动画"的慢体验。</p>
+
+  <h3>1.3 李子柒式体验 — 不通过</h3>
+  <p><strong>依据</strong>：P0需求仅有"最少2套通用模板"一句话，无生产方案、无时间表、无资源评估。</p>
+  <p><strong>三大陷阱</strong>：①模板复用→仪式感消失；②降低精度→15秒变成尴尬等待；③迭代冻结→设计变更需重做动画。</p>
+  <p><strong>改进</strong>：评估程序化动画+关键帧混合方案，定义MVP范围（仅首屏3-5种植物精轨），明确技术替代路径。</p>
+
+  <h3>1.4 Slogan可落地 — 不通过</h3>
+  <p><strong>依据</strong>：助农实物联动无成本测算、无物流方案、无售后流程、无合作方确认。花园世界"送真花"前车之鉴：充值2000元才能兑换，花束货不对板，黑猫投诉8-10起+。</p>
+  <p><strong>核心矛盾</strong>：免费发放→成本谁来承担？付费门槛→变成"花园世界2.0"。</p>
+  <p><strong>改进</strong>：①先做财务模型；②与助农电商平台合作外包供应链；③实物寄送限定为低频惊喜；④法务评估"种什么得什么"口号的虚假宣传风险。</p>
+</div>
+
+<!-- 模块二详情 -->
+<div class="section">
+  <h2>模块二：核心机制评审</h2>
+
+  <h3>2.1 双轨制节奏差 — 有条件通过</h3>
+  <p><strong>风险</strong>：快轨正反馈只有铜钱/经验（功能性），缺乏情感层。精轨15-25秒动画第10次+重复时可能从"治愈"变"拖沓"。双轨切换是设计假设，不是机制保证。</p>
+  <p><strong>升级条件</strong>：①快轨增加轻量情绪反馈（NPC满意度、连卖奖励）；②精轨重复制作可跳过/加速；③设计双轨联动机制确保节奏交替。</p>
+
+  <h3>2.2 熟水一键交付 — 有条件通过</h3>
+  <p><strong>风险</strong>：514种熟水制作体验完全一样（选食材→点一下→拿铜钱），1:1对应关系连选择策略空间都没有。R1（无品质分级）消解了每次交付的随机性。熟水不在图鉴中，连收集反馈都没有。</p>
+  <p><strong>升级条件</strong>：①引入熟水"风味评价"轻量机制；②熟水连卖系统；③庙会集订作为快轨节奏爆点。</p>
+
+  <h3>2.3 底卡槽位复杂度 — 有条件通过</h3>
+  <p><strong>风险</strong>：底卡文档有8种槽位变体（主鲜果/主花卉/辅草本/辅花卉/花卉点缀/草本点缀/珍稀XX/传说XX），花园世界仅1主+2副。越高档可选越少（反直觉）。</p>
+  <p><strong>升级条件</strong>：①将8种变体从"玩家需学习的概念"降级为"后台逻辑+UI标签提示"，玩家只需理解3种基础概念（主料+辅料+点缀）；②高档"少而精"用叙事解释；③新手指引交互式教学关设计；④5-10名目标用户30秒理解率测试。</p>
+
+  <h3>2.4 514种食材内容量 — 不通过</h3>
+  <p><strong>依据</strong>：美术777-1188人天+文案10-20万字，无排期无分批方案。可行性复核将此列为"待办"但未启动。花园世界花卉种类比514少得多（估计100-200种），梦华小院扩容2.5-5倍。</p>
+  <p><strong>改进</strong>：分批上线——首期市井+雅士（28张底卡+317种食材），二期贡品，三期上古。食材图标复用基础形态+颜色/光效差异。建立文案模板化生产流程。</p>
+</div>
+
+<!-- 模块三详情 -->
+<div class="section">
+  <h2>模块三：商业化方案评审</h2>
+
+  <h3>3.1 灵韵降价影响 — 不通过</h3>
+  <p><strong>依据</strong>：花灵贡献花园世界40-60%收入（月2-3亿），灵韵从~¥1000降至¥6且纯收集无数值，<strong>收入替代方案完全缺失</strong>。礼包体系在花园世界仅贡献10-15%，即使翻倍也远不够。"纯收集"模型在小游戏端无成熟先例。</p>
+  <p><strong>关键矛盾</strong>：灵韵主动放弃了gacha的数值驱动机制，却没有等量的替代机制。这不是优化项，是商业可行性是否成立的问题。</p>
+
+  <h3>3.2 ¥6-30定价 — 有条件通过</h3>
+  <p><strong>支持</strong>：与下沉用户付费能力匹配，"一杯奶茶的钱"心理锚点合理，直购降低付费摩擦。</p>
+  <p><strong>不足</strong>：缺乏竞品付费渗透率/ARPPU数据，未明确6元与30元的价值差异，复购机制未设计。</p>
+  <p><strong>升级条件</strong>：补充1-2款同类竞品6-30元价格带的具体付费数据。</p>
+
+  <h3>3.3 掌柜令牌 — 有条件通过</h3>
+  <p><strong>不足</strong>：仅列出"一键浇水、一键收获"两项权益，花园世界月卡¥30+免广告¥12=42元/月的权益远不止这些。免广告权益归属未明确。</p>
+  <p><strong>升级条件</strong>：提供花园世界VIP完整权益与掌柜令牌的逐一对照表。</p>
+
+  <h3>3.4 广告变现模型 — 不通过</h3>
+  <p><strong>依据</strong>：花园世界小游戏端IAA占20-30%（月广告收入1600-2400万），梦华小院<strong>无任何广告变现数据</strong>——无展示点位、无频次、无ARPD、无月收入预估。在3.1已判定收入缺口巨大的前提下，广告收入若再不达标，商业模型无法闭环。</p>
+</div>
+
+<!-- 模块四-六摘要 -->
+<div class="section">
+  <h2>P1模块评审摘要</h2>
+
+  <h3>模块四：图鉴与收集体系</h3>
+  <table>
+    <tr><th>评审项</th><th>判定</th><th>核心问题</th></tr>
+    <tr><td>4.1 食材图鉴命名</td><td><span class="tag tag-fail">不通过</span></td><td>514个古雅名未确认，CSV暴露命名混乱，无命名方法论</td></tr>
+    <tr><td>4.2 茶饮组合深度</td><td><span class="tag tag-warn">有条件通过</span></td><td>1005种够量，但缺解锁节奏设计，食材不跨卡复用削弱探索深度</td></tr>
+    <tr><td>4.3 熟水UI表达</td><td><span class="tag tag-warn">有条件通过</span></td><td>514种熟水无收集反馈，快轨正反馈单薄</td></tr>
+  </table>
+
+  <h3>模块五：工作量与资源评估</h3>
+  <table>
+    <tr><th>评审项</th><th>判定</th><th>核心问题</th></tr>
+    <tr><td>5.1 美术资源总量</td><td><span class="tag tag-fail">不通过</span></td><td>777-1188人天，无排期无分批方案</td></tr>
+    <tr><td>5.2 文案工作量</td><td><span class="tag tag-fail">不通过</span></td><td>10-20万字，无模板，上古级虚构边界未定</td></tr>
+    <tr><td>5.3 技术改动量</td><td><span class="tag tag-warn">有条件通过</span></td><td>三级分类合理，但数据迁移和成品拼接系统需预研</td></tr>
+  </table>
+
+  <h3>模块六：可行性复核复检</h3>
+  <table>
+    <tr><th>#</th><th>原判定</th><th>复检重点</th><th>原分</th><th>新评分</th><th>升降</th></tr>
+    <tr><td>1</td><td>已解决</td><td>穿越者设定接受度</td><td>10</td><td>7</td><td class="risk-mid">-3</td></tr>
+    <tr><td>2</td><td>完美解决</td><td>熟水一键太无聊</td><td>10</td><td>6</td><td class="risk-mid">-4</td></tr>
+    <tr><td>3</td><td>已解决</td><td>514种内容生产</td><td>10</td><td>5</td><td class="risk-high">-5</td></tr>
+    <tr><td>4</td><td>有缺口</td><td>蜜饯底卡够不够</td><td>6</td><td>5</td><td>-1</td></tr>
+    <tr><td>5</td><td>已解决</td><td>仙话vs文化自信</td><td>10</td><td>6</td><td class="risk-mid">-4</td></tr>
+    <tr><td>6</td><td>已解决</td><td>动画实现成本</td><td>10</td><td>4</td><td class="risk-high">-6</td></tr>
+    <tr><td>7</td><td>方案清晰</td><td>图鉴映射隐藏坑</td><td>10</td><td>7</td><td class="risk-mid">-3</td></tr>
+    <tr><td>8</td><td>已确定</td><td>灵韵付费动力</td><td>10</td><td>4</td><td class="risk-high">-6</td></tr>
+    <tr><td>9</td><td>机会</td><td>缺乏定量验证</td><td>10</td><td>5</td><td class="risk-high">-5</td></tr>
+  </table>
+  <p><strong>原自评：95分 → 复检：49/90（约54分）</strong></p>
+  <p>最大降分项：第6项（精轨动画，-6）和第8项（灵韵付费，-6）。核心原因：逻辑通≠做得出来。</p>
+</div>
+
+<!-- P0前置条件 -->
+<div class="section">
+  <h2>P0前置条件（立项前必须解决）</h2>
+
+  <div class="note-box">
+    以下三项缺一不可。如果在2-3周内无法给出可行答案，建议重新评估项目方向或缩减内容规模。
+  </div>
+
+  <h3>前置条件一：精轨动画的技术方案和成本估算</h3>
+  <table>
+    <tr><th>必须回答的问题</th><th>当前状态</th></tr>
+    <tr><td>用什么技术实现？（2D骨骼/Spine/Lottie/视频/程序化）</td><td>未评估</td></tr>
+    <tr><td>每套模板的成本和工期？</td><td>未评估</td></tr>
+    <tr><td>最少需要多少套模板覆盖核心体验？</td><td>仅说"2套"</td></tr>
+    <tr><td>重复播放如何处理？（可跳过/可加速）</td><td>未设计</td></tr>
+    <tr><td>如果全量不可行，MVP范围是什么？</td><td>未定义</td></tr>
+  </table>
+
+  <h3>前置条件二：514种食材的分批上线计划和美术排期</h3>
+  <table>
+    <tr><th>必须回答的问题</th><th>当前状态</th></tr>
+    <tr><td>首期上线多少种食材和底卡？</td><td>未定义</td></tr>
+    <tr><td>美术团队有几人、可用工期多长？</td><td>未确认</td></tr>
+    <tr><td>每种资源类型的工时标准？</td><td>未估算</td></tr>
+    <tr><td>各批次交付时间点和验收标准？</td><td>未制定</td></tr>
+    <tr><td>食材图标复用策略？</td><td>未设计</td></tr>
+  </table>
+
+  <h3>前置条件三：灵韵系统的收入替代方案或整体商业化量化模型</h3>
+  <table>
+    <tr><th>必须回答的问题</th><th>当前状态</th></tr>
+    <tr><td>灵韵各档位预计付费率和ARPU？</td><td>未提供</td></tr>
+    <tr><td>礼包体系各单品预计流水？</td><td>未提供</td></tr>
+    <tr><td>广告展示点位、频次、ARPD、月收入预估？</td><td>完全缺失</td></tr>
+    <tr><td>免费发放助农实物的成本谁承担？</td><td>未计算</td></tr>
+    <tr><td>整体月流水目标及各付费点贡献比例？</td><td>未制定</td></tr>
+  </table>
+</div>
+
+<!-- 综合建议 -->
+<div class="section">
+  <h2>综合建议</h2>
+  <div class="conclusion-box">
+    <h3>决策建议：条件性Go，但条件苛刻</h3>
+    <p>策划文档在概念设计层面质量很高——双轨制节奏差、灵韵纯收集、穿越者叙事、R1无品质分级——这些设计在逻辑上自洽且差异化明确。问题不在"想得对不对"，而在"做不做得出"。</p>
+    <p>1. <strong>最大概率的成功路径</strong>：缩减首期规模。首期仅做市井+雅士（28张底卡+317种食材），砍掉精轨全量动画（改用程序化生长+2-3秒短动画），优先验证"种→收→搭配→收集"核心循环的留存数据，再迭代增加内容深度。</p>
+    <p>2. <strong>商业化最需要补的课</strong>：不是灵韵怎么设计，而是"花园世界月流水5亿的收入结构中，除了花灵gacha以外的40-60%是怎么赚的"。把掌柜令牌、礼包、IAA这三块的收入模型做出来，如果合计能覆盖月流水的50%以上，商业模型就立得住。</p>
+    <p>3. <strong>最值得保留的设计</strong>：茶饮+茶点双线、递进式茶席进阶、"种百草·调百味·成茶宴"卖点。这些是和花园世界的真差异化，不能因为执行困难就砍掉。</p>
+    <p>4. <strong>最需要警惕的陷阱</strong>：创作者偏差。95分自评说明团队对方案有很强的信心，但复检降到54分——差距来自"逻辑通"和"做得出来"之间的鸿沟。后续所有设计决策都必须用"产能能否支撑"来校验。</p>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

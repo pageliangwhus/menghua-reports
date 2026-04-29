@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>花园世界调研报告 · 梦华小院项目评估</title>
+<style>
+  :root {
+    --primary: #6B4226;
+    --primary-light: #8B6914;
+    --accent: #C4956A;
+    --bg: #FDF8F0;
+    --card-bg: #FFFFFF;
+    --text: #3D2B1F;
+    --text-light: #7A6555;
+    --border: #E8D5C0;
+    --pass: #2E7D32;
+    --warn: #E65100;
+    --fail: #C62828;
+    --tag-pass: #E8F5E9;
+    --tag-warn: #FFF3E0;
+    --tag-fail: #FFEBEE;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .page-header {
+    background: linear-gradient(135deg, #4A2C17 0%, #6B4226 50%, #8B6914 100%);
+    color: #FFF;
+    padding: 48px 0 36px;
+    text-align: center;
+  }
+  .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; }
+  .page-header .subtitle { font-size: 15px; opacity: 0.85; }
+  .page-header .meta { font-size: 12px; opacity: 0.6; margin-top: 12px; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  .exec-summary {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(107,66,38,0.06);
+  }
+  .exec-summary h2 { font-size: 20px; color: var(--primary); margin-bottom: 16px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+  .exec-summary .verdict {
+    font-size: 22px; font-weight: 700; text-align: center;
+    padding: 16px; border-radius: 8px; margin: 16px 0;
+    background: linear-gradient(135deg, #FFF8E1, #FFF3E0);
+    color: var(--primary);
+  }
+  .exec-summary ul { padding-left: 20px; }
+  .exec-summary li { margin-bottom: 6px; }
+
+  .section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(107,66,38,0.06);
+  }
+  .section h2 {
+    font-size: 19px; color: var(--primary);
+    border-left: 4px solid var(--accent); padding-left: 12px;
+    margin-bottom: 16px;
+  }
+  .section h3 { font-size: 16px; color: var(--primary-light); margin: 18px 0 10px; }
+  .section p { margin-bottom: 10px; }
+  .section ul, .section ol { padding-left: 20px; margin-bottom: 12px; }
+  .section li { margin-bottom: 4px; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0 16px;
+    font-size: 14px;
+  }
+  th {
+    background: var(--primary); color: #FFF;
+    padding: 10px 12px; text-align: left; font-weight: 600;
+  }
+  td {
+    padding: 9px 12px; border-bottom: 1px solid var(--border);
+  }
+  tr:nth-child(even) td { background: #FAF5EE; }
+  tr:hover td { background: #F5EDE0; }
+
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+  }
+  .tag-pass { background: var(--tag-pass); color: var(--pass); }
+  .tag-warn { background: var(--tag-warn); color: var(--warn); }
+  .tag-fail { background: var(--tag-fail); color: var(--fail); }
+
+  .risk-matrix td:first-child { font-weight: 600; }
+  .risk-high { color: var(--fail); font-weight: 700; }
+  .risk-mid { color: var(--warn); font-weight: 700; }
+  .risk-low { color: var(--pass); font-weight: 700; }
+
+  .data-card {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; margin: 16px 0;
+  }
+  .data-card-item {
+    background: linear-gradient(135deg, #FFF8E1, #FAF5EE);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; text-align: center;
+  }
+  .data-card-item .value { font-size: 22px; font-weight: 700; color: var(--primary); }
+  .data-card-item .label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+  .conclusion-box {
+    background: linear-gradient(135deg, #4A2C17 0%, #6B4226 100%);
+    color: #FFF; border-radius: 10px; padding: 24px 28px; margin-top: 16px;
+  }
+  .conclusion-box h3 { color: #FFD54F; margin-bottom: 10px; font-size: 17px; }
+  .conclusion-box p { opacity: 0.92; margin-bottom: 8px; }
+
+  .footnote {
+    font-size: 12px; color: var(--text-light); border-top: 1px solid var(--border);
+    padding-top: 16px; margin-top: 24px;
+  }
+
+  @media print {
+    .page-header { padding: 24px 0 18px; }
+    .container { padding: 16px; }
+    .section { break-inside: avoid; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>花园世界调研报告</h1>
+  <div class="subtitle">梦华小院 · 项目评估 Step 1</div>
+  <div class="meta">调研时间：2026年4月29日 ｜ 数据来源：WebSearch + 行业报道 + 社区公开信息 + 游戏百科</div>
+</div>
+
+<div class="container">
+
+<!-- 执行摘要 -->
+<div class="exec-summary">
+  <h2>执行摘要</h2>
+  <div class="verdict">结论：花园世界框架值得换皮，但需注意风险</div>
+
+  <h3>值得换皮的核心依据</h3>
+  <ol>
+    <li><strong>市场验证充分</strong>——上线8个月累计收入预估超5亿，全球手游收入百强</li>
+    <li><strong>多端运营成功</strong>——微信小游戏（头部）、App端（畅销榜Top10内）、抖音端（投放登顶）、海外（美国总榜）</li>
+    <li><strong>用户画像匹配</strong>——下沉市场女性用户与梦华小院目标用户高度重叠</li>
+    <li><strong>商业化模型成熟</strong>——gacha+收集+订阅+礼包+IAA多元付费结构</li>
+    <li><strong>营销模式可借鉴</strong>——"送真花"等创新营销，宋代茶文化有天然对标</li>
+  </ol>
+
+  <h3>最大风险</h3>
+  <ol>
+    <li><strong>商业化深度与口碑的矛盾</strong>——"氪金点拉满""数值很重"是收入暴增的原因，也是口碑争议的来源</li>
+    <li><strong>赛道竞争快速升温</strong>——三七互娱等大厂已入局种花小游戏赛道，窗口期在缩短</li>
+    <li><strong>种植本身缺乏深度</strong>——品类结构性问题，种花最终退化为材料来源</li>
+    <li><strong>合规风险</strong>——黑猫投诉多起，未成年人充值和诱导消费争议</li>
+  </ol>
+</div>
+
+<!-- 关键数据卡片 -->
+<div class="section">
+  <h2>花园世界关键数据卡片</h2>
+  <div class="data-card">
+    <div class="data-card-item">
+      <div class="value">8个月</div>
+      <div class="label">上线时长（2025.08-2026.03）</div>
+    </div>
+    <div class="data-card-item">
+      <div class="value">~5亿+</div>
+      <div class="label">累计收入预估</div>
+    </div>
+    <div class="data-card-item">
+      <div class="value">Top 100</div>
+      <div class="label">全球手游收入排名</div>
+    </div>
+    <div class="data-card-item">
+      <div class="value">3400万</div>
+      <div class="label">App端次月流水（环比+48%）</div>
+    </div>
+    <div class="data-card-item">
+      <div class="value">12天</div>
+      <div class="label">春节档微信霸榜天数</div>
+    </div>
+    <div class="data-card-item">
+      <div class="value">Top 1</div>
+      <div class="label">抖音投放排行榜（2026.03）</div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>指标</th><th>数据</th><th>时间范围</th></tr>
+    <tr><td>开发商</td><td>厦门麟贝互娱科技有限公司</td><td>-</td></tr>
+    <tr><td>上线时间</td><td>2025年8月5日公测</td><td>-</td></tr>
+    <tr><td>App端前两月总收入</td><td>近1亿元</td><td>2025年8-9月</td></tr>
+    <tr><td>微信小游戏端</td><td>春节档双榜第一，霸榜12天</td><td>2026年2月</td></tr>
+    <tr><td>抖音小游戏端</td><td>投放排行榜登顶</td><td>2026年3月</td></tr>
+    <tr><td>海外</td><td>冲上美国游戏总榜</td><td>2026年初</td></tr>
+    <tr><td>竞品威胁</td><td>三七互娱入局种花小游戏（畅销榜47名）</td><td>2026年3月</td></tr>
+    <tr><td>口碑定性</td><td>"数值很重""氪金点拉满"</td><td>多家媒体一致判断</td></tr>
+    <tr><td>合规风险</td><td>黑猫投诉8-10起+（诱导消费/退款难）</td><td>持续中</td></tr>
+  </table>
+</div>
+
+<!-- 各模块结论速览 -->
+<div class="section">
+  <h2>各模块结论速览</h2>
+  <table>
+    <tr><th>模块</th><th>通过标准</th><th>判定</th><th>关键发现</th></tr>
+    <tr>
+      <td>模块一：市场表现</td>
+      <td>品类腰部以上+月流水覆盖成本</td>
+      <td><span class="tag tag-pass">通过</span></td>
+      <td>全球百强，月流水预估3000-5000万</td>
+    </tr>
+    <tr>
+      <td>模块二：用户画像</td>
+      <td>与目标用户有可观交集</td>
+      <td><span class="tag tag-pass">通过</span></td>
+      <td>下沉市场女性用户高度匹配</td>
+    </tr>
+    <tr>
+      <td>模块三：商业化</td>
+      <td>花灵≤40%+不依赖单一付费点</td>
+      <td><span class="tag tag-warn">警告</span></td>
+      <td>花灵可能超40%，但多付费点分散风险</td>
+    </tr>
+    <tr>
+      <td>模块四：玩法生命周期</td>
+      <td>中期有驱动力</td>
+      <td><span class="tag tag-pass">基本通过</span></td>
+      <td>收集系统驱动留存，种植缺乏深度</td>
+    </tr>
+    <tr>
+      <td>模块五：内容消耗</td>
+      <td>内容消耗速度合理</td>
+      <td><span class="tag tag-warn">待验证</span></td>
+      <td>需实际体验确认后期内容量</td>
+    </tr>
+    <tr>
+      <td>模块六：核心机制</td>
+      <td>识别痛点+方案有改进</td>
+      <td><span class="tag tag-pass">通过</span></td>
+      <td>种植退化、社交弱是核心痛点，梦华小院方案可针对性改进</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 市场表现 -->
+<div class="section">
+  <h2>模块一：市场表现</h2>
+
+  <h3>App端数据</h3>
+  <table>
+    <tr><th>时间节点</th><th>免费榜排名</th><th>畅销榜排名</th></tr>
+    <tr><td>2025年8月（上线初期）</td><td>第1</td><td>Top50</td></tr>
+    <tr><td>2025年9月</td><td>-</td><td>Top8</td></tr>
+    <tr><td>2025年10月（国庆档）</td><td>-</td><td>第15</td></tr>
+    <tr><td>2026年2月（春节档）</td><td>-</td><td>高位</td></tr>
+    <tr><td>2026年3月</td><td>-</td><td>全球手游收入百强</td></tr>
+  </table>
+
+  <h3>多端收入估算</h3>
+  <table>
+    <tr><th>平台</th><th>收入贡献（估算）</th><th>用户量级</th><th>增长趋势</th></tr>
+    <tr><td>微信小游戏</td><td>最大（~60-70%）</td><td>最大</td><td>稳定高位</td></tr>
+    <tr><td>App Store/安卓</td><td>中等（~20-30%）</td><td>中等</td><td>稳定</td></tr>
+    <tr><td>抖音小游戏</td><td>快速增长中（~10-20%）</td><td>快速增长</td><td>高速增长</td></tr>
+    <tr><td>海外</td><td>新增量</td><td>增长中</td><td>增长中</td></tr>
+  </table>
+  <p>全渠道月流水保守估计在<strong>3000-5000万人民币</strong>。</p>
+</div>
+
+<!-- 用户画像 -->
+<div class="section">
+  <h2>模块二：用户画像与口碑</h2>
+
+  <h3>TapTap用户（2A专项）</h3>
+  <table>
+    <tr><th>维度</th><th>推断</th></tr>
+    <tr><td>年龄层</td><td>18-30岁为主</td></tr>
+    <tr><td>性别</td><td>女性为主，但男性占比高于大盘</td></tr>
+    <tr><td>地域</td><td>一二线城市为主</td></tr>
+    <tr><td>核心偏好</td><td>种花/收集/美学搭配</td></tr>
+    <tr><td>付费特征</td><td>偏理性，对数值付费敏感</td></tr>
+  </table>
+
+  <h3>非TapTap用户（下沉市场）</h3>
+  <table>
+    <tr><th>维度</th><th>推断</th></tr>
+    <tr><td>年龄层</td><td>25-45岁为主</td></tr>
+    <tr><td>性别</td><td>女性为主</td></tr>
+    <tr><td>地域</td><td>二三线城市及以下</td></tr>
+    <tr><td>核心偏好</td><td>轻松种花/消磨时间/收集/治愈感</td></tr>
+    <tr><td>付费特征</td><td>容易被营销打动，付费门槛低但容易被诱导消费</td></tr>
+  </table>
+
+  <h3>流失原因排名</h3>
+  <table>
+    <tr><th>排名</th><th>流失原因</th><th>影响程度</th></tr>
+    <tr><td>1</td><td>数值过重/氪金压力大</td><td class="risk-high">高</td></tr>
+    <tr><td>2</td><td>诱导消费引发反感</td><td class="risk-high">高</td></tr>
+    <tr><td>3</td><td>中期内容重复</td><td class="risk-mid">中</td></tr>
+    <tr><td>4</td><td>未成年人充值争议</td><td class="risk-mid">中</td></tr>
+    <tr><td>5</td><td>客服体验差</td><td class="risk-low">低-中</td></tr>
+  </table>
+
+  <p><strong>黑猫投诉</strong>：至少8-10起以上独立投诉，集中在诱导消费、退款难、未成年人充值。</p>
+</div>
+
+<!-- 商业化模型 -->
+<div class="section">
+  <h2>模块三：商业化模型</h2>
+
+  <h3>付费点结构</h3>
+  <table>
+    <tr><th>付费系统</th><th>类型</th><th>收入贡献（推断）</th></tr>
+    <tr><td><strong>花灵系统</strong></td><td>gacha/抽卡</td><td><strong>最大（40-60%）</strong></td></tr>
+    <tr><td>花瓶系统</td><td>解锁/收集</td><td>高（15-25%）</td></tr>
+    <tr><td>VIP/通行证</td><td>订阅制</td><td>中（10-15%）</td></tr>
+    <tr><td>礼包系统</td><td>一次性购买</td><td>中（10-15%）</td></tr>
+    <tr><td>资源加速</td><td>微交易</td><td>低-中</td></tr>
+    <tr><td>装饰/装扮</td><td>外观</td><td>低-中</td></tr>
+  </table>
+
+  <h3>付费金字塔推断</h3>
+  <table>
+    <tr><th>层级</th><th>占比</th><th>特征</th></tr>
+    <tr><td>大R（月付1000+）</td><td>~5%</td><td>花灵抽卡核心用户，追求满收集</td></tr>
+    <tr><td>中R（月付100-1000）</td><td>~15%</td><td>购买礼包、通行证、偶尔抽卡</td></tr>
+    <tr><td>小R（月付10-100）</td><td>~30%</td><td>通行证、小额礼包、资源加速</td></tr>
+    <tr><td>零氪/广告付费</td><td>~50%</td><td>通过广告获得资源，几乎不直接付费</td></tr>
+  </table>
+
+  <h3>营销创新</h3>
+  <table>
+    <tr><th>策略</th><th>描述</th><th>效果</th></tr>
+    <tr><td>送真花</td><td>游戏内达成条件可获赠真实花束</td><td>极大降低用户信任门槛，出圈效应强</td></tr>
+    <tr><td>漫剧/短剧素材</td><td>用漫剧/短剧风格素材买量引流</td><td>精准触达女性用户，ROI高</td></tr>
+    <tr><td>IP联动</td><td>与《锦绣芳华》等IP联动</td><td>扩大用户圈层</td></tr>
+    <tr><td>小游戏分发</td><td>微信/抖音小游戏零门槛获客</td><td>获客成本远低于App端</td></tr>
+  </table>
+</div>
+
+<!-- 玩法与机制 -->
+<div class="section">
+  <h2>模块四-六：玩法与机制</h2>
+
+  <h3>新手期节奏（0-30分钟）</h3>
+  <table>
+    <tr><th>阶段</th><th>时间</th><th>内容</th></tr>
+    <tr><td>引导期</td><td>0-5分钟</td><td>基础种植教学、花瓶介绍</td></tr>
+    <tr><td>首次成就感</td><td>5-15分钟</td><td>完成第一个花瓶搭配、第一个订单</td></tr>
+    <tr><td>系统解锁</td><td>15-30分钟</td><td>花灵系统、花坊系统逐步解锁</td></tr>
+    <tr><td>付费引导</td><td>20-30分钟</td><td>首次接触花灵抽卡/礼包</td></tr>
+  </table>
+
+  <h3>中期驱动力</h3>
+  <table>
+    <tr><th>驱动力</th><th>强度</th></tr>
+    <tr><td>花瓶收集</td><td class="risk-high">高</td></tr>
+    <tr><td>花灵养成</td><td class="risk-high">高（付费驱动）</td></tr>
+    <tr><td>订单系统</td><td class="risk-mid">中</td></tr>
+    <tr><td>种植升级</td><td class="risk-mid">中</td></tr>
+  </table>
+
+  <h3>关键发现：种植退化问题</h3>
+  <p>种花在花园世界中<strong>兼具美学价值和材料功能</strong>，但随着游戏进程推进，玩家注意力逐渐从"种花本身"转向"花灵收集/花瓶搭配"，种花越来越像<strong>纯材料来源</strong>。这是品类结构性问题。</p>
+  <p><strong>对梦华小院的启示</strong>：需要在"种植本身的乐趣"上做更多设计（如制茶工艺、茶道仪式等增加种植过程的仪式感）。</p>
+
+  <h3>留存拐点</h3>
+  <table>
+    <tr><th>时间节点</th><th>风险</th></tr>
+    <tr><td>第3-5天</td><td>资源获取速度下降，第一次感受到"卡"</td></tr>
+    <tr><td>第7-14天</td><td>花灵养成遇到瓶颈，付费压力显现</td></tr>
+    <tr><td>第30天+</td><td>花瓶收集接近完成，新鲜感下降</td></tr>
+  </table>
+</div>
+
+<!-- 换皮可行性 -->
+<div class="section">
+  <h2>换皮可行性评估</h2>
+
+  <h3>框架可复用性</h3>
+  <table>
+    <tr><th>框架模块</th><th>可复用程度</th><th>说明</th></tr>
+    <tr><td>种植+收集核心循环</td><td><span class="tag tag-pass">高</span></td><td>种植→收获→收集→搭配的核心循环成熟</td></tr>
+    <tr><td>多端架构</td><td><span class="tag tag-pass">高</span></td><td>微信+抖音+App+海外四端运营验证</td></tr>
+    <tr><td>gacha+收集付费体系</td><td><span class="tag tag-warn">中</span></td><td>需降低付费深度，调整花灵为灵韵</td></tr>
+    <tr><td>花瓶搭配系统</td><td><span class="tag tag-pass">高</span></td><td>可直接映射为茶具/茶席搭配</td></tr>
+    <tr><td>订单系统</td><td><span class="tag tag-warn">中</span></td><td>需增强趣味性和仪式感</td></tr>
+    <tr><td>社交系统</td><td><span class="tag tag-warn">低-中</span></td><td>社交不是核心驱动力，需重新设计</td></tr>
+    <tr><td>营销模式</td><td><span class="tag tag-pass">高</span></td><td>送真花→送茶叶，漫剧→宋代短剧</td></tr>
+  </table>
+
+  <h3>差异化空间</h3>
+  <table>
+    <tr><th>维度</th><th>花园世界</th><th>梦华小院</th><th>差异化强度</th></tr>
+    <tr><td>题材</td><td>欧美花园/现代花卉</td><td>宋代茶文化</td><td><span class="tag tag-pass">高</span></td></tr>
+    <tr><td>种植物</td><td>花卉</td><td>茶叶/宋代植物</td><td>高</td></tr>
+    <tr><td>收集物</td><td>花瓶</td><td>茶具/茶席</td><td>高</td></tr>
+    <tr><td>角色系统</td><td>花灵（拟人化精灵）</td><td>灵韵（茶文化角色）</td><td>中（框架相似，包装不同）</td></tr>
+    <tr><td>文化深度</td><td>浅（休闲治愈）</td><td>深（宋代文化底蕴）</td><td><span class="tag tag-pass">极高</span></td></tr>
+    <tr><td>竞品壁垒</td><td>先发优势</td><td>文化壁垒+题材差异化</td><td>中</td></tr>
+  </table>
+</div>
+
+<!-- 风险矩阵 -->
+<div class="section">
+  <h2>风险矩阵</h2>
+  <table class="risk-matrix">
+    <tr><th>风险</th><th>概率</th><th>影响</th><th>缓解措施</th></tr>
+    <tr><td>赛道竞争加剧（大厂入局）</td><td class="risk-high">高</td><td class="risk-high">高</td><td>加速开发，抢占文化差异化窗口</td></tr>
+    <tr><td>商业化深度调整导致ARPU下降</td><td class="risk-mid">中</td><td class="risk-high">高</td><td>通过IAA补偿，增加小额付费点</td></tr>
+    <tr><td>宋代茶文化题材受众偏窄</td><td class="risk-mid">中</td><td class="risk-mid">中</td><td>降低文化门槛，用"古风+治愈"做大众化包装</td></tr>
+    <tr><td>花园世界持续霸榜挤压空间</td><td class="risk-mid">中</td><td class="risk-high">高</td><td>差异化定位（花园世界用户≠茶文化用户）</td></tr>
+    <tr><td>合规风险延续</td><td class="risk-low">低-中</td><td class="risk-mid">中</td><td>从设计层面避免诱导付费</td></tr>
+  </table>
+</div>
+
+<!-- 最终判断 -->
+<div class="section">
+  <h2>最终判断</h2>
+  <div class="conclusion-box">
+    <h3>花园世界框架是否值得换皮？</h3>
+    <p><strong>结论：值得换皮，但不是简单换皮，而是"借鉴框架 + 差异化重构"。</strong></p>
+    <p>1. <strong>市场验证</strong>：8个月从零到全球百强，"种植+收集"框架在下沉市场女性用户中的商业可行性经过验证。</p>
+    <p>2. <strong>差异化壁垒</strong>："宋代茶文化"题材天然形成差异化壁垒。大厂可以抄种花，但很难快速切入文化深度赛道。</p>
+    <p>3. <strong>框架成熟度</strong>：多端运营、买量投放、出海等全链条已经验证，换皮降低了技术和运营风险。</p>
+    <p>4. <strong>需要改进的核心</strong>：花园世界的"数值过重"是双刃剑。梦华小院需在保留商业化效率的同时，降低付费密度、提升种植乐趣、增加文化体验深度。</p>
+  </div>
+
+  <div class="conclusion-box" style="margin-top: 16px;">
+    <h3>最大的风险是什么？</h3>
+    <p><strong>最大的风险不是产品本身，而是时机。</strong></p>
+    <p>花园世界已证明赛道的商业潜力，三七互娱等大厂已入局。如果梦华小院不能在6-12个月内上线，文化差异化的窗口期可能被竞品填满。但同时，宋代茶文化的深度和壁垒也意味着快速换皮可能无法做出真正的差异化。</p>
+    <p><strong>建议</strong>：先上线核心玩法验证市场，再通过版本迭代加深文化内容。</p>
+  </div>
+</div>
+
+<!-- 数据缺口 -->
+<div class="section">
+  <h2>数据缺口与后续行动</h2>
+  <h3>P0级（必须补充）</h3>
+  <table>
+    <tr><th>数据项</th><th>获取方式</th><th>优先级</th></tr>
+    <tr><td>TapTap精确评分</td><td>登录查看</td><td class="risk-high">高</td></tr>
+    <tr><td>App Store精确评分</td><td>登录查看</td><td class="risk-high">高</td></tr>
+    <tr><td>花灵系统精确收入占比</td><td>实际游戏体验</td><td class="risk-high">高</td></tr>
+    <tr><td>小红书用户口碑</td><td>直接访问小红书</td><td class="risk-high">高</td></tr>
+    <tr><td>抖音评论区舆情</td><td>直接访问抖音</td><td class="risk-mid">中</td></tr>
+  </table>
+
+  <h3>P1级（建议补充）</h3>
+  <table>
+    <tr><th>体验项</th><th>目的</th><th>优先级</th></tr>
+    <tr><td>实际游戏体验至15级+</td><td>验证商业化节奏和玩法循环</td><td class="risk-high">高</td></tr>
+    <tr><td>花灵抽卡体验</td><td>评估gacha深度和付费感受</td><td class="risk-high">高</td></tr>
+    <tr><td>小游戏端体验</td><td>与App端对比差异</td><td class="risk-mid">中</td></tr>
+    <tr><td>竞品（织梦森林等）体验</td><td>理解品类竞争格局</td><td class="risk-mid">中</td></tr>
+  </table>
+</div>
+
+<div class="footnote">
+  <strong>声明</strong>：本报告中所有数据均来自公开可查的媒体报道、社区信息和第三方数据平台搜索结果。未经实际游戏体验验证的数据标注为"推断"或"估算"。精确的付费数据（ARPU、LTV、付费渗透率等）因涉及商业机密未公开，相关结论基于行业经验推断。
+</div>
+
+</div>
+</body>
+</html>

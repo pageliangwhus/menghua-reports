@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>梦华小院 · 内部方案评审报告 v2.0</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      color: #1a1a1a;
+      background: #f5f5f0;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 24px 20px 60px;
+    }
+
+    /* 标题区 */
+    .report-header {
+      border-bottom: 3px solid #8b5c2a;
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+    }
+
+    .report-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #5a3010;
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+    }
+
+    .meta-item {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .meta-item span {
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* 结论 badge */
+    .verdict-banner {
+      background: #fff8ee;
+      border: 1px solid #e8c870;
+      border-left: 4px solid #d4a017;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 28px;
+      font-size: 14px;
+      color: #6b4a00;
+    }
+
+    .verdict-banner strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+      color: #5a3010;
+    }
+
+    /* 章节 */
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #5a3010;
+      margin: 36px 0 14px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #e8d5b8;
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #333;
+      margin: 20px 0 10px;
+    }
+
+    h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #555;
+      margin: 16px 0 8px;
+    }
+
+    p { margin-bottom: 12px; }
+
+    strong { color: #2a2a2a; }
+
+    /* 引用块 */
+    blockquote {
+      background: #f8f4ee;
+      border-left: 4px solid #c8a060;
+      padding: 10px 14px;
+      margin: 14px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 14px;
+      color: #4a3010;
+    }
+
+    /* 列表 */
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    li { margin-bottom: 5px; }
+
+    /* 表格 */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 14px 0;
+      border-radius: 8px;
+      border: 1px solid #e0d0b8;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      min-width: 320px;
+    }
+
+    th {
+      background: #f0e6d2;
+      color: #5a3010;
+      font-weight: 600;
+      padding: 9px 12px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 8px 12px;
+      border-top: 1px solid #ede3d0;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td { background: #faf7f2; }
+
+    /* 状态标签 */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .tag-pass { background: #e6f4ea; color: #1e7e34; }
+    .tag-cond { background: #fff8e1; color: #b8860b; }
+    .tag-fail { background: #fdecea; color: #c0392b; }
+    .tag-pend { background: #e8f0fe; color: #1a56db; }
+
+    /* P0 卡片 */
+    .p0-card {
+      border: 1px solid #e0d0b8;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .p0-card-header {
+      background: #f0e6d2;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .p0-label {
+      background: #8b5c2a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .p0-card-header h3 {
+      margin: 0;
+      font-size: 15px;
+      color: #3a1a00;
+    }
+
+    .p0-card-body { padding: 14px 16px; }
+
+    /* 盲区警示框 */
+    .blind-spot {
+      background: #fff3e0;
+      border: 1px solid #ffb74d;
+      border-left: 4px solid #f57c00;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 14px 0;
+    }
+
+    .blind-spot-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e65100;
+      margin-bottom: 8px;
+    }
+
+    /* 建议框 */
+    .suggest-box {
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      border-left: 4px solid #43a047;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 14px 0;
+    }
+
+    /* 代码块（验证步骤） */
+    .steps-block {
+      background: #f8f4ee;
+      border: 1px solid #e0d0b8;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 14px 0;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .step-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .step-num {
+      background: #8b5c2a;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-arrow {
+      text-align: center;
+      color: #c8a060;
+      font-size: 16px;
+      margin: 2px 0 6px 16px;
+    }
+
+    /* 营销阶段卡片 */
+    .stage-card {
+      border: 1px solid #e0d0b8;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 14px 0;
+    }
+
+    .stage-header {
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stage-1 .stage-header { background: #8b5c2a; }
+    .stage-2 .stage-header { background: #5c7a3a; }
+    .stage-3 .stage-header { background: #2a5c7a; }
+
+    .stage-body {
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+
+    .stage-body blockquote {
+      margin-top: 0;
+      font-style: italic;
+    }
+
+    .stage-body ul { margin-top: 8px; }
+
+    /* 综合判定区 */
+    .verdict-section {
+      background: #faf7f2;
+      border: 1px solid #e0d0b8;
+      border-radius: 10px;
+      padding: 18px 18px;
+      margin: 20px 0;
+    }
+
+    .ab-class {
+      margin-bottom: 16px;
+    }
+
+    .ab-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .ab-label.a { background: #c0392b; }
+    .ab-label.b { background: #2980b9; }
+
+    /* 一句话结论 */
+    .final-conclusion {
+      background: #5a3010;
+      color: #fff;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 28px 0 20px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .final-conclusion strong { color: #ffd080; }
+
+    /* 分隔线 */
+    hr {
+      border: none;
+      border-top: 1px solid #e8d5b8;
+      margin: 28px 0;
+    }
+
+    /* 来源注释 */
+    .source-note {
+      font-size: 12px;
+      color: #999;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+
+    /* 响应式 */
+    @media (max-width: 480px) {
+      .page { padding: 16px 14px 48px; }
+      .report-title { font-size: 19px; }
+      .meta-grid { grid-template-columns: 1fr; }
+      h2 { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 标题 -->
+  <div class="report-header">
+    <div class="report-title">梦华小院 · 内部方案评审报告 v2.0</div>
+    <div class="meta-grid">
+      <div class="meta-item">评审日期：<span>2026-05-04</span></div>
+      <div class="meta-item">评审视角：<span>内部参与者</span></div>
+      <div class="meta-item">评审性质：<span>专项复评（新方案 4-30）</span></div>
+      <div class="meta-item">报告性质：<span>开放式风险清单</span></div>
+      <div class="meta-item">上次结论：<span>条件性 Go，三个 P0 待解决</span></div>
+      <div class="meta-item">本次结论：<span>维持条件性 Go</span></div>
+    </div>
+  </div>
+
+  <div class="verdict-banner">
+    <strong>本次总体结论</strong>
+    维持条件性 Go——P0 风险等级从「致命」降为「可控待落地」。三个 P0 均不再是硬性阻塞，但战略对齐问题需在 Step 4 启动前完成内部讨论。
+  </div>
+
+  <!-- 一、复评背景 -->
+  <h2>一、复评背景</h2>
+  <p>上次评审（2026-04-29）将项目定性为<strong>条件性 Go</strong>，三个 P0 前置条件均未给出可执行方案：</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>P0 风险</th><th>上次状态</th><th>本次复评重点</th></tr>
+      <tr><td>P0-1：精轨动画</td><td><span class="tag tag-fail">❌ 无方案</span></td><td>新方案改为首次解锁动画，是否真正解决问题？</td></tr>
+      <tr><td>P0-2：美术工作量</td><td><span class="tag tag-fail">❌ 无分批计划</span></td><td>首期 ~120 种能否支撑核心玩法？排期是否落地？</td></tr>
+      <tr><td>P0-3：商业化闭环</td><td><span class="tag tag-fail">❌ 收入替代缺失</span></td><td>恢复花灵三层制是否能闭合商业化逻辑？</td></tr>
+    </table>
+  </div>
+  <p>新方案（4-30）对三项均给出了回应。本报告逐项判定其有效性，并就评审过程中延伸出的营销传播定位问题给出讨论结论。</p>
+
+  <!-- 二、P0-1 -->
+  <h2>二、P0-1：精轨动画</h2>
+
+  <div class="p0-card">
+    <div class="p0-card-header">
+      <span class="p0-label">新方案</span>
+      <h3>废弃每次播动画，改为首次解锁时播放</h3>
+    </div>
+    <div class="p0-card-body">
+      <ul>
+        <li>每张底卡<strong>首次解锁时</strong>播放 AI 水墨风 MP4 交互动画</li>
+        <li>覆盖范围：13 张底卡 × 4 段 = <strong>52 个视频</strong></li>
+        <li>日常制作（非首次）退回 1-2 秒，与快轨体验接近</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>判定：<span class="tag tag-cond">⚠️ 有条件通过</span></h3>
+  <p>新方案在技术实现和成本上可行，但改变的不只是技术路径，而是精轨的<strong>产品体验定位</strong>：</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>维度</th><th>旧方案</th><th>新方案</th></tr>
+      <tr><td>精轨核心价值</td><td>每次制作都有仪式感</td><td>首次解锁奖励，日常与快轨趋同</td></tr>
+      <tr><td>玩家感受节奏</td><td>常态沉浸</td><td>新鲜感 + 收集驱动</td></tr>
+      <tr><td>对种田玩家适配</td><td>中等（每次要等动画）</td><td>更高（减少操作等待）</td></tr>
+    </table>
+  </div>
+  <p>这本质上是一个<strong>合理的方向调整</strong>——从「仪式感常态」转向「解锁新鲜感驱动」，更契合种田类玩家的收集心理。但团队需明确接受这个定位转移，而非当作纯技术优化处理。</p>
+
+  <div class="blind-spot">
+    <div class="blind-spot-title">⚑ 待确认的设计盲区</div>
+    <p>新方案有两个关键问题未回答，需要团队对齐：</p>
+
+    <h4>问题一：首次解锁的体验形式选哪种？</h4>
+    <p>新方案定的是「播 AI 水墨 MP4」，但团队内部有另一个候选方向尚未最终确认——<strong>第一人称交互式制作体验</strong>（参考《时尚百货城》快餐店玩法的视角模式）。</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>维度</th><th>候选 A：AI 水墨 MP4</th><th>候选 B：第一人称交互制作</th></tr>
+        <tr><td>体验性质</td><td>被动观看，仪式感来自画面质量</td><td>主动参与，仪式感来自"亲手做出来"</td></tr>
+        <tr><td>玩家记忆点</td><td>看到一段好看的动画</td><td>第一次亲手调出这杯茶的过程</td></tr>
+        <tr><td>收集驱动力</td><td>中（看完动画→图鉴+1）</td><td>高（每个新配方都有完整"第一次"）</td></tr>
+        <tr><td>操作复杂度</td><td>无操作，纯观看</td><td>2-3 个有仪式感的交互步骤</td></tr>
+        <tr><td>开发成本</td><td>低（52 个视频）</td><td>中（交互流程 + 第一人称美术资产）</td></tr>
+        <tr><td>对种田用户适配</td><td>高（无额外操作负担）</td><td>中高（首次特殊体验，不影响日常）</td></tr>
+      </table>
+    </div>
+    <p>两个方向也可以组合：<strong>先做第一人称交互制作，完成后播成品动画</strong>，参与感和视觉冲击力双重叠加，但开发成本相应提高。</p>
+    <p>如果选候选方向 B，还需同步确认：① 交互步骤复杂度（多步时序 vs 简化 2-3 个手势）；② 第一人称美术风格是否与快轨有明显视觉区分。</p>
+
+    <h4>问题二：精轨日常制作（非首次）的操作模式是什么？</h4>
+    <p>目前文档描述为「1-2 秒完成」，但未说明操作流程，存在三种截然不同的可能：</p>
+    <ul>
+      <li><strong>方案 A — 手动选配</strong>：每次手动选底卡 + 填 3 个槽位，只是缩短等待时间</li>
+      <li><strong>方案 B — 一键复用</strong>：默认沿用上次配方，玩家确认即可</li>
+      <li><strong>方案 C — 系统推荐</strong>：根据当前库存自动推荐组合，玩家一键接受</li>
+    </ul>
+    <p>背景：种田本身已是高频操作（种→浇→采），若交订单也需每次手动选配，两种高频叠加很可能让玩家感到繁琐。参考花园世界的花艺制作界面，它采用的是「系统自动推荐填花、玩家可替换、点制作」的轻操作模式，对种田用户友好度最高。</p>
+    <p><strong>建议团队在下次内部会前同时确认以上两个问题</strong>，它们共同决定精轨的完整体验形态，以及精轨对快轨的差异化价值落在哪里。</p>
+  </div>
+
+  <!-- 三、P0-2 -->
+  <h2>三、P0-2：美术工作量</h2>
+
+  <div class="p0-card">
+    <div class="p0-card-header">
+      <span class="p0-label">新方案</span>
+      <h3>否定一次性上线，改为首期 ~120 种分批迭代</h3>
+    </div>
+    <div class="p0-card-body">
+      <ul>
+        <li>否定「一次性上线 514 种食材」的前提</li>
+        <li>首期 MVP 仅上线 <strong>~120 种食材</strong>，分 4 批迭代至全量</li>
+        <li>声称工作量缩减 50-65%</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>判定：<span class="tag tag-cond">⚠️ 有条件通过</span></h3>
+  <p>分批思路方向正确，风险等级从致命降为可控。但「可控」需要以下内容支撑，目前均未见到：</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>落地细节</th><th>状态</th></tr>
+      <tr><td>首期 120 种食材的具体品类分布（鲜果/花卉/本草各多少）</td><td><span class="tag tag-pend">❓ 未明确</span></td></tr>
+      <tr><td>120 种食材能覆盖多少张底卡的组合完整性</td><td><span class="tag tag-pend">❓ 未验证</span></td></tr>
+      <tr><td>四批迭代的节点时间表</td><td><span class="tag tag-pend">❓ 未明确</span></td></tr>
+      <tr><td>每批对应的美术排期和人力估算</td><td><span class="tag tag-pend">❓ 未明确</span></td></tr>
+    </table>
+  </div>
+
+  <h3>核心风险：120 种能否支撑玩法完整性？</h3>
+  <p>首期 120 种食材（约占全量 23%）必须回答一个具体问题：</p>
+  <blockquote>69 张底卡中，有多少张在首期 120 种食材下能凑满 3 个槽位、产出有效组合？</blockquote>
+  <p>如果大量底卡因食材缺失而无法使用，图鉴收集的驱动力会在上线初期就大幅削弱，直接影响留存。</p>
+  <div class="suggest-box">
+    <strong>建议：</strong>补充一张首期食材与底卡覆盖度的对照表，验证 120 种食材能激活的有效组合数，这是判断首期玩法完整性的最小验证单元。
+  </div>
+
+  <!-- 四、P0-3 -->
+  <h2>四、P0-3：商业化闭环</h2>
+
+  <div class="p0-card">
+    <div class="p0-card-header">
+      <span class="p0-label">新方案</span>
+      <h3>收回移除花灵主张，改为三层适配制</h3>
+    </div>
+    <div class="p0-card-body">
+      <div class="table-wrap">
+        <table>
+          <tr><th>层级</th><th>定位</th><th>玩家占比</th></tr>
+          <tr><td>免费层</td><td>每日广告 ×1 抽</td><td>90%+</td></tr>
+          <tr><td>VIP 层</td><td>月卡用户额外权益</td><td>5-10%</td></tr>
+          <tr><td>鲸鱼层</td><td>保留 ¥648-1280 完整付费路径</td><td>&lt;1%</td></tr>
+        </table>
+      </div>
+      <p>花灵收入占总收入约 <strong>70%</strong>。</p>
+    </div>
+  </div>
+
+  <h3>判定：<span class="tag tag-cond">⚠️ 有条件通过</span></h3>
+  <p>商业化逻辑闭合了，这是进步。但一个新的问题需要正视：</p>
+  <p>梦华小院原始差异化卖点之一，是「比花园世界更亲民的付费设计」。花园世界因氪金深度被差评反复批评（「不到一个月氪了三千」「平均3天推一个68元礼包」），这是它口碑上最大的伤口。新方案保留 ¥648-1280 鲸鱼路径、花灵占收入 70%，结构上与花园世界高度相似。这本身不是错误，但团队需要在以下两个方向上做出明确选择：</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>需要明确的选择</th><th>选项 A</th><th>选项 B</th></tr>
+      <tr><td>对外宣传定位</td><td>主打「亲民低付费」，突出免费体验</td><td>不主打付费差异，转向题材/玩法差异化</td></tr>
+      <tr><td>鲸鱼设计边界</td><td>设置付费上限，主动避开氪金争议</td><td>开放深度付费，用内容质量对冲口碑风险</td></tr>
+    </table>
+  </div>
+  <p>选 A：需在设计层面保证免费玩家有完整体验，付费不影响核心玩法进度。<br>选 B：需在舆论层面预判口碑风险，提前准备应对策略。</p>
+  <p><strong>目前新方案两者都有、但没有明确站哪边，这是需要内部对齐的战略问题，不是设计细节层面可以解决的。</strong></p>
+
+  <h3>广告变现模型</h3>
+  <p>新方案提到「免费层每日广告 ×1 抽」，但完整的广告点位设计和月收入预估仍未见到。这个模型应在首期 MVP 上线前补全，否则低付费场景下的收入底线无法估算。</p>
+
+  <!-- 五、其余评审项 -->
+  <h2>五、其余评审项状态更新</h2>
+
+  <h3>因新方案调整而变化的项目</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>评审项</th><th>上次</th><th>本次更新</th></tr>
+      <tr>
+        <td>1.3 李子柒式体验能否实现</td>
+        <td><span class="tag tag-fail">❌</span></td>
+        <td><span class="tag tag-cond">⚠️ 有条件通过</span><br><small>首次解锁动画方案可行，日常仪式感设计待补充（见第二节）</small></td>
+      </tr>
+      <tr>
+        <td>1.4 助农实物联动</td>
+        <td><span class="tag tag-fail">❌</span></td>
+        <td><span class="tag tag-cond">⚠️ 有条件通过</span><br><small>明确为低频营销事件+合作方承担成本，不再是付费兑换，风险降低</small></td>
+      </tr>
+      <tr>
+        <td>2.4 514 种食材工作量</td>
+        <td><span class="tag tag-fail">❌</span></td>
+        <td><span class="tag tag-cond">⚠️ 有条件通过</span><br><small>分批思路成立，需补首期覆盖验证（见第三节）</small></td>
+      </tr>
+      <tr>
+        <td>3.1 灵韵降价后收入替代</td>
+        <td><span class="tag tag-fail">❌</span></td>
+        <td><span class="tag tag-cond">⚠️ 有条件通过</span><br><small>三层制闭合商业逻辑，差异化定位需内部对齐（见第四节）</small></td>
+      </tr>
+      <tr>
+        <td>3.4 广告变现模型</td>
+        <td><span class="tag tag-fail">❌</span></td>
+        <td><span class="tag tag-pend">⚠️ 待补充</span><br><small>仅提及每日 ×1 抽，完整点位和收入预估仍缺失</small></td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>维持原判定的项目</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>评审项</th><th>判定</th><th>说明</th></tr>
+      <tr><td>1.1 种植向定位</td><td><span class="tag tag-cond">⚠️</span></td><td>种植为本原则清晰，玩法落地依赖精轨操作模型确定</td></tr>
+      <tr><td>1.2 下沉市场定位</td><td><span class="tag tag-pass">✅</span></td><td>Step 2 数据已佐证</td></tr>
+      <tr><td>2.1 双轨节奏差</td><td><span class="tag tag-cond">⚠️</span></td><td>精轨日常操作模型未定，快慢轨差异边界仍模糊</td></tr>
+      <tr><td>2.2 熟水一键交付</td><td><span class="tag tag-cond">⚠️</span></td><td>机制清晰，与精轨的体验差异依赖设计盲区的确定</td></tr>
+      <tr><td>2.3 三槽位复杂度</td><td><span class="tag tag-cond">⚠️</span></td><td>需用户测试验证下沉用户 30 秒内能否理解</td></tr>
+      <tr><td>3.2 ¥6-30 定价策略</td><td><span class="tag tag-cond">⚠️</span></td><td>方向合理，竞品数据佐证仍偏弱</td></tr>
+      <tr><td>3.3 掌柜令牌权益</td><td><span class="tag tag-cond">⚠️</span></td><td>权益清单仍未见完整版</td></tr>
+      <tr><td>4.1-4.3 图鉴收集体系</td><td><span class="tag tag-cond">⚠️</span></td><td>逻辑自洽，等首期食材清单落地后可验证</td></tr>
+      <tr><td>5.2 文案工作量</td><td><span class="tag tag-cond">⚠️</span></td><td>命名体系方法论存在，批量生产能力未验证</td></tr>
+      <tr><td>5.3 技术改动量</td><td><span class="tag tag-cond">⚠️</span></td><td>三级改动分类清晰，具体工期未见</td></tr>
+    </table>
+  </div>
+
+  <h3>图鉴收集体系的设计改进建议</h3>
+  <blockquote>来自对花园世界花艺制作界面的对标观察，供界面设计阶段参考。</blockquote>
+  <p>花园世界的花艺制作界面有一个「最高售价」勾选项——系统自动根据当前库存组合出售价最高的花艺，解决的是「怎么把已有的花卖得更贵」的效率问题。这个设计值得借鉴，但花园世界同时存在一个明显断层：</p>
+  <blockquote>玩家去别人花园偷到稀有花回来后，<strong>无法快速知道这朵花能解锁哪些新花艺</strong>——需要自己去花艺界面逐一翻找，收集驱动力在这里断掉了。</blockquote>
+  <p>梦华小院有 ~1005 种茶饮组合，食材到成品的认知链路又比花→花艺更不直觉，这个问题如果不针对性设计，会比花园世界更严重。建议在界面设计阶段提前考虑以下三个功能：</p>
+
+  <h4>① 新解锁提示</h4>
+  <p>每次采摘或获得新食材时，系统自动提示「你现在可以制作 X 种新茶饮了」，点击直接跳转到可解锁的配方列表。让「种到新东西→发现能做新茶饮」这个正反馈链路即时闭合，不依赖玩家主动去翻图鉴。</p>
+
+  <h4>② "差一步"提示</h4>
+  <p>在食材图鉴或配方界面，对当前库存差一种食材就能解锁的配方给出明确提示——「再种一次枇杷，就能解锁桂花枇杷饮」。这是收集类游戏最强的短期驱动力，给玩家一个清晰的「下一步」，而非面对 1005 种组合无从下手。</p>
+
+  <h4>③ 最高收益推荐</h4>
+  <p>在熟水订单或精轨制作界面，根据当前库存自动推荐能产出最高收益的组合，类似花园世界的「最高售价」功能。降低日常操作的决策负担，让玩家在不想动脑的时候也能高效推进。</p>
+  <p>这三个功能本质上都是<strong>收集闭环的基础设施</strong>，优先级应高于装饰性 UI 设计。</p>
+
+  <!-- 六、营销传播 -->
+  <h2>六、营销传播定位讨论</h2>
+  <blockquote>本节内容来自评审过程中的延伸讨论，不影响 P0 判定结论，供团队决策参考。</blockquote>
+
+  <h3>花园世界「送真花」的底层逻辑</h3>
+  <p>花园世界破圈靠的不只是「送东西」，而是一个<strong>认知反差</strong>：</p>
+  <blockquote>「手机里种的花，现实里真的会开」</blockquote>
+  <p>用户晒的不是花，晒的是「这件事本身的荒诞感和惊喜感」——反差越大，传播力越强。加上<strong>概率性获得</strong>的设计，天然制造社交话题（「你收到了吗」「我还没收到」）。</p>
+
+  <h3>为什么「种水果→做茶饮」存在认知断层</h3>
+  <p>花园世界的链路是同类转化（花进去，花出来），用户不需要理解中间步骤。梦华小院是跨类转化（水果/草本进去，茶饮出来），中间存在认知断层——用户看到草莓，第一反应不是草莓奶茶。</p>
+  <p>这个断层不能靠「强调茶文化」来弥合。茶文化是产品内核，但对种田用户来说是陌生语言；种田用户的核心情感是<strong>丰收感</strong>（种满了的满足）和<strong>展示欲</strong>（我的农场比你的好），不是「我设计了一款饮品」的创作者成就感。</p>
+
+  <h3>三阶段分层营销钩子</h3>
+  <p>建议分三个阶段使用不同的钩子，而非用同一套语言打所有人：</p>
+
+  <div class="stage-card stage-1">
+    <div class="stage-header">第一阶段（冷启动拉新）：助农水果钩子</div>
+    <div class="stage-body">
+      <blockquote>「你在游戏里种满的赣南脐橙，现实里真的是农民种的——种满触发丰收，真果寄到家」</blockquote>
+      <ul>
+        <li>直接命中种田用户的丰收感，认知路径最短</li>
+        <li>助农公益框架让传播动机升级为「我玩游戏做了一件有意义的事」，天然适合微信/抖音二次传播</li>
+        <li>成本可控：与助农品牌合作，游戏方提供流量，实物成本由合作方承担</li>
+        <li>对标花园世界「送真花」，认知门槛更低（水果比花束更日常）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage-card stage-2">
+    <div class="stage-header">第二阶段（站稳后扩圈）：联名真实饮品钩子</div>
+    <div class="stage-body">
+      <blockquote>「你游戏里调的那杯桂花枇杷饮，我们把它做出来了——全服第一个解锁此配方的玩家，用你的 ID 命名这款联名奶茶」</blockquote>
+      <ul>
+        <li>打的是奶茶用户和创作用户，不是种田用户的第一动机</li>
+        <li>适合作为第二波扩圈工具，把用户盘从种田用户扩展到更广人群</li>
+        <li>可与连锁奶茶品牌合作，每个版本节点出一款新联名饮品，持续制造话题</li>
+        <li>⚠️ <strong>不适合冷启动</strong>——种田用户看到「配方变奶茶」的感受是「跟我有什么关系」，无法驱动进入</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage-card stage-3">
+    <div class="stage-header">第三阶段（中后期留存）：茶席生成菜单钩子</div>
+    <div class="stage-body">
+      <blockquote>「截图你摆好的茶宴，扫码生成现实版菜单——每道成品附真实做法或购买渠道」</blockquote>
+      <ul>
+        <li>成本极低，不依赖实物或品牌合作</li>
+        <li>满足深度玩家的创作感和成就感</li>
+        <li>适合版本更新时驱动老玩家回流和晒图</li>
+      </ul>
+    </div>
+  </div>
+
+  <p style="margin-top:14px"><strong>三个钩子的顺序不能乱</strong>：如果第一波就打「配方变奶茶」，种田用户进不来；等种田用户站稳了基本盘，再用联名钩子破圈，效率才高。</p>
+
+  <h3>对外传播语言建议</h3>
+  <blockquote><strong>对外说「种水果·开饮品铺」，对内做「宋代茶文化收集游戏」</strong></blockquote>
+  <p>茶文化作为产品内核保留，提供质感和差异化深度，但不出现在冷启动素材的第一句话里。传播入口用直觉化语言（种水果/开饮品铺/丰收送水果），玩家深入后自然感受到文化层。</p>
+
+  <h3>关键待验证假设</h3>
+  <blockquote><strong>茶饮/甜品成品的视觉呈现，能否达到「花开」同等级别的视觉冲击力？</strong></blockquote>
+  <p>如果梦华小院的成品画面不够打，联名钩子和茶席钩子都会失效。建议将成品视觉原型验证的优先级提至所有美术资源之首。</p>
+
+  <h3>成品视觉原型验证思路</h3>
+  <p>验证的核心问题：① 视觉冲击力是否达标（想截图/分享的冲动）；② 收集驱动力是否成立（想解锁这个的欲望）。</p>
+
+  <div class="steps-block">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div>
+        <strong>内容数据预判</strong>（零成本，1 天）<br>
+        去小红书/抖音搜「宋代点茶」「古风甜品」「汉服茶道」，对比「花艺/插花/花束」类内容的播放量和互动率，判断茶饮/甜品品类的天然视觉传播基础。
+      </div>
+    </div>
+    <div class="step-arrow">↓</div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div>
+        <strong>静态成品效果图</strong>（1-2 周，1-2 名美术）<br>
+        画 5-8 张代表性成品效果图，涵盖茶饮、甜品、茶宴全景各类型，参考花园世界花艺成品的构图角度和光影风格直接对标。
+      </div>
+    </div>
+    <div class="step-arrow">↓</div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div>
+        <strong>小范围用户测试</strong>（1 周，20-30 人）<br>
+        目标用户：种田类游戏玩家，下沉女性用户为主。把成品图和花园世界花艺成品图混排，让用户对每张图打分：「你想把这个发给朋友/发朋友圈」（1-5 分）。<br>
+        注意：问「想分享」而非「好不好看」——前者是传播行为，后者是审美判断。
+      </div>
+    </div>
+    <div class="step-arrow">↓</div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div>
+        <strong>对比结论</strong><br>
+        核心指标：茶饮/甜品成品图的平均「想分享」分数，是否不低于花园世界花艺成品图的 <strong>80%</strong>。
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>结果</th><th>含义</th><th>下一步</th></tr>
+      <tr><td>达到 80% 以上</td><td>视觉冲击力前提成立</td><td>推进后续大量美术资源制作</td></tr>
+      <tr><td>低于 80%</td><td>视觉有差距，需找具体原因</td><td>调整美术方向后再迭代一轮，不要带着问题进入大量制作</td></tr>
+    </table>
+  </div>
+
+  <!-- 七、综合判定 -->
+  <h2>七、综合判定</h2>
+
+  <div class="verdict-section">
+    <div class="ab-class">
+      <span class="ab-label a">A 类：战略对齐问题（需内部讨论，不能靠补文档解决）</span>
+      <div class="table-wrap">
+        <table>
+          <tr><th>问题</th><th>影响</th></tr>
+          <tr><td>精轨首次解锁体验形式选哪种？</td><td>决定仪式感来源和开发成本</td></tr>
+          <tr><td>精轨日常操作模型选哪种（手动/复用/推荐）？</td><td>决定核心循环节奏和快慢轨差异边界</td></tr>
+          <tr><td>付费定位选哪边（亲民 vs 题材差异化）？</td><td>决定对外宣传口径和口碑风险预案</td></tr>
+          <tr><td>冷启动传播语言用种田语言还是茶文化语言？</td><td>决定第一波用户从哪里来</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="ab-class">
+      <span class="ab-label b">B 类：落地文档补充（可在近期跟进完成）</span>
+      <div class="table-wrap">
+        <table>
+          <tr><th>文档</th><th>建议时间</th></tr>
+          <tr><td>首期 120 种食材品类分布 + 底卡覆盖度验证表</td><td>1 周内</td></tr>
+          <tr><td>四批迭代时间节点 + 美术排期</td><td>2 周内</td></tr>
+          <tr><td>广告点位设计 + 月收入预估</td><td>1 周内</td></tr>
+          <tr><td>掌柜令牌完整权益清单</td><td>1 周内</td></tr>
+          <tr><td>茶饮/甜品成品视觉原型</td><td>尽早启动，优先级最高</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <p><strong>Step 4 综合评估建议在以下条件满足后启动：</strong></p>
+    <ol>
+      <li>A 类战略问题在内部完成对齐</li>
+      <li>成品视觉原型完成并通过团队验收</li>
+    </ol>
+  </div>
+
+  <!-- 八、一句话结论 -->
+  <div class="final-conclusion">
+    <strong>一句话结论</strong><br>
+    新方案把三个致命风险降级为可管理问题，方向判断值得肯定。在精轨操作模型、付费定位、传播入口语言三个战略方向对齐之前，不建议启动 Step 4——这三个问题的答案会影响综合评估的核心前提假设。
+  </div>
+
+  <div class="source-note">
+    输入来源：项目初案/设定推导文档（旧方案）、新方案-4-30/文案索引链接（新方案补充）、小院新项目评估.md（评估总览）、03_内部方案评审/评审规范.md
+  </div>
+
+</div>
+</body>
+</html>
